@@ -1,0 +1,151 @@
+body {
+  background-color: #c0e1e4;
+}
+
+body * {
+  font-family: 'Inconsolata', monospace;
+}
+
+div#container {
+  /* border: 1px dashed green; */
+  margin: 0 auto;
+  width: 900px;
+  height: 500px;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+}
+
+div#container hr#separator {
+  display: none;
+}
+
+div.box {
+  display: flex;
+  flex-direction: column;
+}
+
+div#container div#default-links-box {
+  /* border: 1px dashed tomato; */
+  min-width: 200px;
+}
+
+div#container h3.title {
+  align-self: center;
+  border-bottom: 2px #db32e0 solid;
+  margin-bottom: 50px;
+}
+
+div#container div#default-links-box ul#sites {
+  margin-top: 0;
+  box-shadow: 2px 0px 5px 1px #bf8383;
+}
+
+div#container div#default-links-box ul#sites li {
+  margin: 10px 0;
+}
+
+div#container div#default-links-box ul a,
+div#buttons-area div#radio-inputs-box label {
+  color: rgba(0, 0, 0, 0.589);
+}
+
+div#container div#default-links-box ul a:hover,
+div#buttons-area div#radio-inputs-box div:hover * {
+  color: rgba(0, 0, 0, 0.931);
+  background-color: linen;
+  border-radius: 10%;
+}
+
+div#container div#custom-user-links-box {
+  /* border: 1px dashed steelblue; */
+  align-items: flex-start;
+}
+
+div#container div#custom-user-links-box textarea#custom-links-textarea {
+  width: 500px;
+  max-width: 500px;
+  min-width: 200px;
+  height: 150px;
+  max-height: 300px;
+  min-height: 50px;
+  box-shadow: -1px 0px 4px 2px #b392f0;
+}
+
+div#buttons-area {
+  display: flex;
+  justify-content: center;
+  margin-top: 5%;
+}
+
+div#buttons-area div#radio-inputs-box {
+  align-self: center;
+  margin-left: 2%;
+}
+
+div#buttons-area div#radio-inputs-box div,
+div#buttons-area div#radio-inputs-box div * {
+  cursor: pointer;
+  user-select: none;
+}
+
+div#buttons-area button#go-to-sites {
+  width: 200px;
+  height: 80px;
+  background-color: blanchedalmond;
+  color: yellowgreen;
+  border: 0;
+  box-shadow: 1px 1px 1px 1px #18053a;
+  font-size: 2rem;
+}
+
+div#buttons-area button#go-to-sites:active {
+  width: 200px;
+  height: 80px;
+  background-color: rgba(151, 197, 22, 0.657);
+  box-shadow: -2px -2px 2px #18053a;
+}
+
+@media only screen and (max-width: 890px) {
+  div#container {
+    flex-direction: column;
+    min-height: 500px;
+    height: 100%;
+    width: auto;
+  }
+  div#container hr#separator {
+    display: block;
+    margin-top: 5%;
+    width: 80%;
+    align-self: center;
+  }
+  div#container h3.title {
+    margin-bottom: 20px;
+  }
+  div#container div#default-links-box ul {
+    align-self: center;
+    padding: 0 40px;
+  }
+  div#container div#custom-user-links-box {
+    align-content: center;
+    min-height: 300px;
+  }
+  div#container div#custom-user-links-box textarea#custom-links-textarea {
+    align-self: center;
+    width: 70%;
+  }
+  div#buttons-area {
+    align-items: center;
+  }
+  div#buttons-area div#radio-inputs-box {
+    margin-top: 20px;
+  }
+}
+
+@media only screen and (max-width: 435px) {
+  div#buttons-area {
+    flex-direction: column;
+    margin-top: 10%;
+    padding-bottom: 10%;
+  }
+}

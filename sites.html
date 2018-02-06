@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Sites</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="https://png.icons8.com/color/link/30">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+  <script src="script.js"></script>
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <div id="container">
+
+    <div id="default-links-box" class="box">
+      <h3 class="title">Default Sites</h3>
+      <ul id="sites"></ul>
+    </div>
+
+    <hr id="separator" />
+
+    <div id="custom-user-links-box" class="box">
+      <h3 class="title">Custom Links</h3>
+      <textarea id="custom-links-textarea" placeholder="Insert custom links with coma between them..."></textarea>
+    </div>
+
+  </div>
+
+  <hr/>
+
+  <div id="buttons-area">
+    <button id="go-to-sites">Click me!</button>
+
+    <div id="radio-inputs-box">
+
+      <div>
+        <label for="only-default-sites">
+          <input id="only-default-sites" type="radio" name="choose-links" checked value="only-default-sites"> Only Default Sites</label>
+      </div>
+
+      <div>
+        <label for="only-custom-links">
+          <input id="only-custom-links" type="radio" name="choose-links" value="only-custom-links"> Only Custom Links</label>
+      </div>
+
+      <div>
+        <label for="both">
+          <input id="both" type="radio" name="choose-links" value="both"> Both!</label>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>
