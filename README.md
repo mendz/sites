@@ -3,7 +3,7 @@
 Adding some default sites:
 
 * Add an array of JS objects which looks like this:
-  ```json
+  ```js
   {
     name: 'SITE-NAME',
     url: 'SITE-URL'
