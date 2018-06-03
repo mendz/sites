@@ -1,5 +1,11 @@
-// TODO: Add an option to add the data on the site it self and save it with cookies / local-history.
+/* global chrome */
 
+// TODO: Add an option to set the data on the site it self (at the moment as prompt dialog) and save it with local storage.
+// TODO: Add icons.
+// TODO: add a check not to open index.html when already opened.
+// TODO: change the page to a React APP.
+// TODO: Add an option to add/remove a site.
+// TODO: Add an option to copy all sites urls to string.
 
 const loadSitesToList = sites => {
   const listElement = document.querySelector('ul#sites');
@@ -49,7 +55,17 @@ const openDefaultLinks = () => {
     }
 
     for (const site of allSites) {
-      window.open(site, '_blank');
+      let pinned = false;
+
+      // pined the defaultSites
+      if (defaultSites.find(defaultSite => defaultSite.url === site)) {
+        pinned = true;
+      }
+
+      chrome.tabs.create({
+        url: site,
+        pinned
+      });
     }
   });
 };
