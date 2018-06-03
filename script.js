@@ -1,3 +1,6 @@
+// TODO: Add an option to add the data on the site it self and save it with cookies / local-history.
+
+
 const loadSitesToList = sites => {
   const listElement = document.querySelector('ul#sites');
 
@@ -7,9 +10,9 @@ const loadSitesToList = sites => {
 const openDefaultLinks = () => {
   const button = document.querySelector('#go-to-sites');
 
-  //Add here the array of JS objects sites
+  // Add here the array of JS objects sites
   const defaultSites = [];
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   loadSitesToList(defaultSites);
 
@@ -20,28 +23,32 @@ const openDefaultLinks = () => {
     let allSites;
 
     switch (radioButtonSecretedValue) {
-      case 'only-default-sites': {
-        allSites = defaultSites.map(site => site.url);
-        break;
+    case 'only-default-sites':
+    {
+      allSites = defaultSites.map(site => site.url);
+      break;
+    }
+    case 'only-custom-links':
+    {
+      allSites = customLinks || [];
+      if (!customLinks) {
+        alert('You need to enter values to the box!');
       }
-      case 'only-custom-links': {
-        allSites = customLinks ? customLinks : [];
-        if (!customLinks) {
-          alert('You need to enter values to the box!');
-        }
-        break;
-      }
-      case 'both': {
-        allSites = customLinks ? defaultSites.map(site => site.url).concat(customLinks) : defaultSites.map(site => site.url);
-        break;
-      }
-      default: {
-        allSites = defaultSites.map(site => site.url);
-        break;
-      }
+      break;
+    }
+    case 'both':
+    {
+      allSites = customLinks ? defaultSites.map(site => site.url).concat(customLinks) : defaultSites.map(site => site.url);
+      break;
+    }
+    default:
+    {
+      allSites = defaultSites.map(site => site.url);
+      break;
+    }
     }
 
-    for (let site of allSites) {
+    for (const site of allSites) {
       window.open(site, '_blank');
     }
   });
