@@ -1,5 +1,6 @@
 /* global chrome */
 
+// TODO: add a message for when there is no site to open becurse all exists already.
 // TODO: add a check not to open index.html when already opened.
 // TODO: Add an option to set the data on the site it self (at the moment as prompt dialog) and save it with local storage.
 // TODO: Add icons.
@@ -61,9 +62,18 @@ const setOpenDefaultLinks = () => {
         pinned = true;
       }
 
-      chrome.tabs.create({
-        url: site,
-        pinned
+      // get all the tabs in the window (except the active extension tab) so it won't open an exists tab
+      chrome.tabs.query({
+        currentWindow: true,
+        active: false
+      }, tabsArray => {
+
+        if (!tabsArray.find(tab => tab.url === site)) {
+          chrome.tabs.create({
+            url: site,
+            pinned
+          });
+        }
       });
     }
   });
