@@ -24,6 +24,7 @@ div#container hr#separator {
 div.box {
   display: flex;
   flex-direction: column;
+  margin-right: 1em;
 }
 
 div#container div#default-links-box {
@@ -90,9 +91,7 @@ div#buttons-area div#radio-inputs-box div * {
   user-select: none;
 }
 
-div#buttons-area button#go-to-sites {
-  width: 200px;
-  height: 80px;
+button {
   background-color: blanchedalmond;
   color: yellowgreen;
   border: 0;
@@ -100,11 +99,20 @@ div#buttons-area button#go-to-sites {
   font-size: 2rem;
 }
 
-div#buttons-area button#go-to-sites:active {
-  width: 200px;
-  height: 80px;
+button:active {
   background-color: rgba(151, 197, 22, 0.657);
   box-shadow: -2px -2px 2px #18053a;
+}
+
+button#insert-custom-links {
+  width: 100%px;
+  height: 80px;
+  margin-top: .5em;
+}
+
+div#buttons-area button#go-to-sites {
+  width: 200px;
+  height: 80px;
 }
 
 @media only screen and (max-width: 890px) {
