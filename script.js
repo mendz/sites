@@ -2,7 +2,6 @@
 /* global chrome */
 
 // TODO: add a message for when there is no site to open becurse all exists already.
-// TODO: add a button to reload all site with prefix domain: youtube / facebook / twitter so it will log in.
 // TODO: Add an option to set the data on the site it self (at the moment as prompt dialog) and save it with local storage.
 // TODO: Add icons.
 // TODO: change the page to a React APP.
@@ -11,6 +10,8 @@
 // Add here the array of JS objects sites
 const defaultSites = [];
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+const getCustomTabs = tabsArray => tabsArray.filter(tab => !defaultSites.find(site => site.url === tab.url));
 
 const loadSitesToList = sites => {
   const listElement = document.querySelector('ul#sites');
@@ -30,29 +31,29 @@ const setOpenDefaultLinks = () => {
     let allSites;
 
     switch (radioButtonSecretedValue) {
-    case 'only-default-sites':
-    {
-      allSites = defaultSites.map(site => site.url);
-      break;
-    }
-    case 'only-custom-links':
-    {
-      allSites = customLinks || [];
-      if (!customLinks) {
-        alert('You need to enter values to the box!');
-      }
-      break;
-    }
-    case 'both':
-    {
-      allSites = customLinks ? defaultSites.map(site => site.url).concat(customLinks) : defaultSites.map(site => site.url);
-      break;
-    }
-    default:
-    {
-      allSites = defaultSites.map(site => site.url);
-      break;
-    }
+      case 'only-default-sites':
+        {
+          allSites = defaultSites.map(site => site.url);
+          break;
+        }
+      case 'only-custom-links':
+        {
+          allSites = customLinks || [];
+          if (!customLinks) {
+            alert('You need to enter values to the box!');
+          }
+          break;
+        }
+      case 'both':
+        {
+          allSites = customLinks ? defaultSites.map(site => site.url).concat(customLinks) : defaultSites.map(site => site.url);
+          break;
+        }
+      default:
+        {
+          allSites = defaultSites.map(site => site.url);
+          break;
+        }
     }
 
     for (const site of allSites) {
@@ -80,26 +81,45 @@ const setOpenDefaultLinks = () => {
 };
 
 const setInsertCustomClinks = () => {
-  const testButton = document.querySelector('button#insert-custom-links');
+  const insertCustomLinksButton = document.querySelector('button#insert-custom-links');
 
-  testButton.addEventListener('click', () => {
+  insertCustomLinksButton.addEventListener('click', () => {
     chrome.tabs.query({
       currentWindow: true,
       active: false
     }, tabsArray => {
-      const customLinks = tabsArray.filter(tab => !defaultSites.find(site => site.url === tab.url));
+      const customLinks = getCustomTabs(tabsArray);
       document.querySelector('#custom-links-textarea').value = `${customLinks.map(tab => tab.url)}`;
     });
   });
 };
 
-// run the code when DOM is fully loaded.
-if (document.readyState === 'complete' || (document.readyState !== 'loading' && !document.documentElement.doScroll)) {
+const setRefreshUrls = () => {
+  const setRefreshUrlsButton = document.querySelector('button#refresh');
+
+  setRefreshUrlsButton.addEventListener('click', () => {
+    chrome.tabs.query({
+      currentWindow: true,
+      active: false
+    }, tabsArray => {
+      const siteDomainRefreshRegex = /(facebook|youtube|twitter)\.com/;
+      const tabIdsToRefresh = getCustomTabs(tabsArray).filter(tab => siteDomainRefreshRegex.test(tab.url));
+      tabIdsToRefresh.forEach(tab => chrome.tabs.reload(tab.id));
+    });
+  });
+}
+
+function init() {
   setOpenDefaultLinks();
   setInsertCustomClinks();
+  setRefreshUrls();
+}
+
+// run the code when DOM is fully loaded.
+if (document.readyState === 'complete' || (document.readyState !== 'loading' && !document.documentElement.doScroll)) {
+  init();
 } else {
   document.addEventListener('DOMContentLoaded', () => {
-    setOpenDefaultLinks();
-    setInsertCustomClinks();
+    init();
   });
 }

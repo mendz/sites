@@ -1,6 +1,6 @@
 # Sites
 
-Adding some default sites:
+How to add default sites:
 
 * Add an array of JS objects which looks like this:
   ```js

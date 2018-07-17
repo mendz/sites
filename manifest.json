@@ -1,7 +1,7 @@
 {
   "name": "Open Sites",
-  "description": "Open a default set of sites and custom ones.",
-  "version": "1.2.0",
+  "description": "Open a default set of sites and custom ones. The refresh svg icon is from: http://www.zondicons.com/",
+  "version": "1.3.0",
   "manifest_version": 2,
   "background": {
     "scripts": ["background.js"]
