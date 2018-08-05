@@ -107,12 +107,61 @@ const setRefreshUrls = () => {
       tabIdsToRefresh.forEach(tab => chrome.tabs.reload(tab.id));
     });
   });
+};
+
+function saveDialogItem() {
+  const formAddSite = document.querySelector('form#form-add-site');
+  const name = formAddSite.siteName.value;
+  const url = formAddSite.siteUrl.value;
+
+  formAddSite.siteName.value = '';
+  formAddSite.siteUrl.value = '';
+
+  const data = {
+    defaultSites: {
+      name,
+      url
+    }
+  };
+
+  chrome.storage.local.sync(data, () => {
+    //  Data's been saved
+    console.log('data saved');
+
+  });
+}
+
+function populateDialogItemsList(data) {
+  console.log(data);
+
+}
+
+function setPlusButton() {
+  const plus = document.querySelector('div#container div#default-links-box div.title-container button#plus-open-default-sites');
+
+  plus.addEventListener('click', () => {
+    const dialog = document.querySelector('dialog');
+
+    chrome.storage.sync.get('defaultSites', data => {
+      if (data) {
+        populateDialogItemsList(data);
+      }
+    });
+
+    dialog.showModal();
+  });
+
+  const addSiteButton = document.querySelector('form#form-add-site button');
+  addSiteButton.addEventListener('click', () => {
+    saveDialogItem();
+  });
 }
 
 function init() {
   setOpenDefaultLinks();
   setInsertCustomClinks();
   setRefreshUrls();
+  setPlusButton();
 }
 
 // run the code when DOM is fully loaded.

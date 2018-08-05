@@ -95,7 +95,6 @@ button {
   --button-color-text: yellowgreen;
   --button-backgroundColor: blanchedalmond;
   --button-backgroundColor-active: rgba(151, 197, 22, 0.657);
-
   background-color: var(--button-backgroundColor);
   color: var(--button-color-text);
   border: 0;
@@ -113,12 +112,13 @@ button#insert-custom-links {
   height: 80px;
   margin-top: .5em;
 }
+
 button#refresh {
   width: 50px;
   margin-right: .5em;
 }
 
-button#refresh svg{
+button#refresh svg {
   width: 100%;
   height: 100%;
   fill: var(--button-color-text);
@@ -171,4 +171,34 @@ div#buttons-area button#go-to-sites {
     margin-top: 10%;
     padding-bottom: 10%;
   }
+}
+
+dialog div#inputs-default-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+dialog div#inputs-default-container input {
+  width: 35%;
+  margin-right: .5em;
+}
+
+dialog div#inputs-default-container button {
+  width: 20%;
+}
+
+div#container div#default-links-box div.title-container button#plus-open-default-sites {
+  height: .9em;
+  width: .9em;
+  margin-left: .5em;
+  margin-top: 10px;
+}
+
+div#container div#default-links-box div.title-container button#plus-open-default-sites svg{
+  width: 100%;
+  height: 100%;
+}
+
+div#container div#default-links-box div.title-container {
+  display: flex;
 }

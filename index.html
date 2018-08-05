@@ -13,11 +13,24 @@
 
 <body>
 
-
+  <dialog>
+    <h1>Default Sites Settings</h1>
+    <div id="inputs-default-container">
+      <form action="#" id="form-add-site">
+        <input type="text" name="siteName" id="site-name" placeholder="Insert Site name">
+        <input type="url" name="siteUrl" id="site-url" placeholder="Insert Site URL">
+        <button>Add a default site</button>
+      </form>
+    </div>
+    <ul id="saved-default-sites"></ul>
+  </dialog>
   <div id="container">
 
     <div id="default-links-box" class="box">
-      <h3 class="title">Default Sites</h3>
+      <div class="title-container">
+        <h3 class="title">Default Sites</h3>
+        <button id="plus-open-default-sites"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg></button>
+      </div>
       <ul id="sites"></ul>
     </div>
 
