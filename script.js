@@ -11,7 +11,7 @@
 const defaultSites = [];
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-const getCustomTabs = tabsArray => tabsArray.filter(tab => !defaultSites.find(site => site.url === tab.url));
+const getCustomTabs = tabsArray => tabsArray.filter(tab => !defaultSites.find(site => site.url === tab.url) && !tab.pinned);
 
 const loadSitesToList = sites => {
   const listElement = document.querySelector('ul#sites');
