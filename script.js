@@ -8,12 +8,18 @@
 // TODO: Add an option to add/remove a site.
 
 // Add here the array of JS objects sites
-const defaultSitesArray = [];
+const defaultSitesArray = new Promise((resolve, reject) => {
+  chrome.storage.sync.get('defaultSites', data => {
+    console.log('load');
+
+    resolve(data.defaultSites);
+  });
+});
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 const isObjectEmpty = obj => Object.getOwnPropertyNames(obj).length === 0;
 
-const getCustomTabs = tabsArray => tabsArray.filter(tab => !defaultSitesArray.find(site => site.url === tab.url) && !tab.pinned);
+const getCustomTabs = tabsArray => tabsArray.filter(async tab => await !defaultSitesArray().find(site => site.url === tab.url) && !tab.pinned);
 
 const loadSitesToList = sites => {
   const listElement = document.querySelector('ul#sites');
@@ -21,12 +27,13 @@ const loadSitesToList = sites => {
   listElement.innerHTML = sites.map(site => `<li><a href="${site.url}" target="_blank">${site.name}</a></li>`).join('');
 };
 
-const setOpenDefaultLinks = () => {
+const setOpenDefaultLinks = async () => {
   const button = document.querySelector('#go-to-sites');
+  console.log('set');
 
-  loadSitesToList(defaultSitesArray);
+  loadSitesToList(await defaultSitesArray);
 
-  button.addEventListener('click', () => {
+  button.addEventListener('click', async () => {
     const radioButtonSecretedValue = Array.from(document.querySelectorAll('input[name="choose-links"]')).filter(input => input.checked)[0].value;
     const textareaValue = document.querySelector('#custom-links-textarea').value;
     const customLinks = textareaValue ? textareaValue.replace(/(http.*)\s*/g, '$1').split(',') : null;
@@ -34,7 +41,7 @@ const setOpenDefaultLinks = () => {
 
     switch (radioButtonSecretedValue) {
       case 'only-default-sites': {
-        allSites = defaultSitesArray.map(site => site.url);
+        allSites = await defaultSitesArray().map(site => site.url);
         break;
       }
       case 'only-custom-links': {
@@ -45,11 +52,15 @@ const setOpenDefaultLinks = () => {
         break;
       }
       case 'both': {
-        allSites = customLinks ? defaultSitesArray.map(site => site.url).concat(customLinks) : defaultSitesArray.map(site => site.url);
+        allSites = customLinks
+          ? await defaultSitesArray()
+              .map(site => site.url)
+              .concat(customLinks)
+          : await defaultSitesArray().map(site => site.url);
         break;
       }
       default: {
-        allSites = defaultSitesArray.map(site => site.url);
+        allSites = await defaultSitesArray().map(site => site.url);
         break;
       }
     }
@@ -58,7 +69,7 @@ const setOpenDefaultLinks = () => {
       let pinned = false;
 
       // pined the defaultSites
-      if (defaultSitesArray.find(defaultSite => defaultSite.url === site)) {
+      if (await defaultSitesArray().find(defaultSite => defaultSite.url === site)) {
         pinned = true;
       }
 
@@ -176,12 +187,6 @@ const setPlusButton = () => {
   const formAddSiteButton = document.querySelector('form#form-add-site');
   formAddSiteButton.addEventListener('submit', saveDialogItem);
 };
-
-const loadDefaultSites = () => {
-  chrome.storage.sync.get('defaultSites', data => {
-    defaultSitesArray = data.defaultSites;
-  });
-}
 
 function init() {
   setOpenDefaultLinks();
