@@ -12,14 +12,15 @@
 </head>
 
 <body>
-
+  <button id="reset">RESET</button>
+  <button id="log">LOG ALL</button>
   <dialog>
     <h1>Default Sites Settings</h1>
     <div id="inputs-default-container">
       <form action="#" id="form-add-site">
-        <input type="text" name="siteName" id="site-name" placeholder="Insert Site name">
-        <input type="url" name="siteUrl" id="site-url" placeholder="Insert Site URL">
-        <button>Add a default site</button>
+        <input type="text" name="siteName" id="site-name" placeholder="Insert Site name" required>
+        <input type="url" name="siteUrl" id="site-url" placeholder="Insert Site URL" required>
+        <button type="submit">Add a default site</button>
       </form>
     </div>
     <ul id="saved-default-sites"></ul>

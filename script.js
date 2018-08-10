@@ -8,10 +8,12 @@
 // TODO: Add an option to add/remove a site.
 
 // Add here the array of JS objects sites
-const defaultSites = [];
+const defaultSitesArray = [];
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-const getCustomTabs = tabsArray => tabsArray.filter(tab => !defaultSites.find(site => site.url === tab.url) && !tab.pinned);
+const isObjectEmpty = obj => Object.getOwnPropertyNames(obj).length === 0;
+
+const getCustomTabs = tabsArray => tabsArray.filter(tab => !defaultSitesArray.find(site => site.url === tab.url) && !tab.pinned);
 
 const loadSitesToList = sites => {
   const listElement = document.querySelector('ul#sites');
@@ -22,7 +24,7 @@ const loadSitesToList = sites => {
 const setOpenDefaultLinks = () => {
   const button = document.querySelector('#go-to-sites');
 
-  loadSitesToList(defaultSites);
+  loadSitesToList(defaultSitesArray);
 
   button.addEventListener('click', () => {
     const radioButtonSecretedValue = Array.from(document.querySelectorAll('input[name="choose-links"]')).filter(input => input.checked)[0].value;
@@ -31,51 +33,50 @@ const setOpenDefaultLinks = () => {
     let allSites;
 
     switch (radioButtonSecretedValue) {
-      case 'only-default-sites':
-        {
-          allSites = defaultSites.map(site => site.url);
-          break;
+      case 'only-default-sites': {
+        allSites = defaultSitesArray.map(site => site.url);
+        break;
+      }
+      case 'only-custom-links': {
+        allSites = customLinks || [];
+        if (!customLinks) {
+          alert('You need to enter values to the box!');
         }
-      case 'only-custom-links':
-        {
-          allSites = customLinks || [];
-          if (!customLinks) {
-            alert('You need to enter values to the box!');
-          }
-          break;
-        }
-      case 'both':
-        {
-          allSites = customLinks ? defaultSites.map(site => site.url).concat(customLinks) : defaultSites.map(site => site.url);
-          break;
-        }
-      default:
-        {
-          allSites = defaultSites.map(site => site.url);
-          break;
-        }
+        break;
+      }
+      case 'both': {
+        allSites = customLinks ? defaultSitesArray.map(site => site.url).concat(customLinks) : defaultSitesArray.map(site => site.url);
+        break;
+      }
+      default: {
+        allSites = defaultSitesArray.map(site => site.url);
+        break;
+      }
     }
 
     for (const site of allSites) {
       let pinned = false;
 
       // pined the defaultSites
-      if (defaultSites.find(defaultSite => defaultSite.url === site)) {
+      if (defaultSitesArray.find(defaultSite => defaultSite.url === site)) {
         pinned = true;
       }
 
       // get all the tabs in the window (except the active extension tab) so it won't open an exists tab
-      chrome.tabs.query({
-        currentWindow: true,
-        active: false
-      }, tabsArray => {
-        if (!tabsArray.find(tab => tab.url === site)) {
-          chrome.tabs.create({
-            url: site,
-            pinned
-          });
+      chrome.tabs.query(
+        {
+          currentWindow: true,
+          active: false,
+        },
+        tabsArray => {
+          if (!tabsArray.find(tab => tab.url === site)) {
+            chrome.tabs.create({
+              url: site,
+              pinned,
+            });
+          }
         }
-      });
+      );
     }
   });
 };
@@ -84,13 +85,16 @@ const setInsertCustomClinks = () => {
   const insertCustomLinksButton = document.querySelector('button#insert-custom-links');
 
   insertCustomLinksButton.addEventListener('click', () => {
-    chrome.tabs.query({
-      currentWindow: true,
-      active: false
-    }, tabsArray => {
-      const customLinks = getCustomTabs(tabsArray);
-      document.querySelector('#custom-links-textarea').value = `${customLinks.map(tab => tab.url)}`;
-    });
+    chrome.tabs.query(
+      {
+        currentWindow: true,
+        active: false,
+      },
+      tabsArray => {
+        const customLinks = getCustomTabs(tabsArray);
+        document.querySelector('#custom-links-textarea').value = `${customLinks.map(tab => tab.url)}`;
+      }
+    );
   });
 };
 
@@ -98,52 +102,70 @@ const setRefreshUrls = () => {
   const setRefreshUrlsButton = document.querySelector('button#refresh');
 
   setRefreshUrlsButton.addEventListener('click', () => {
-    chrome.tabs.query({
-      currentWindow: true,
-      active: false
-    }, tabsArray => {
-      const siteDomainRefreshRegex = /(facebook|youtube|twitter)\.com/;
-      const tabIdsToRefresh = getCustomTabs(tabsArray).filter(tab => siteDomainRefreshRegex.test(tab.url));
-      tabIdsToRefresh.forEach(tab => chrome.tabs.reload(tab.id));
-    });
+    chrome.tabs.query(
+      {
+        currentWindow: true,
+        active: false,
+      },
+      tabsArray => {
+        const siteDomainRefreshRegex = /(facebook|youtube|twitter)\.com/;
+        const tabIdsToRefresh = getCustomTabs(tabsArray).filter(tab => siteDomainRefreshRegex.test(tab.url));
+        tabIdsToRefresh.forEach(tab => chrome.tabs.reload(tab.id));
+      }
+    );
   });
 };
 
-function saveDialogItem() {
+const resetStorage = () => chrome.storage.sync.clear(() => console.log('All CLEAR!'));
+const logStorage = () => chrome.storage.sync.get(null, data => console.log(data));
+
+const populateDialogItemsList = data => {
+  console.log('populateDialogItemsList', data.defaultSites);
+  const dialogList = document.querySelector('dialog ul#saved-default-sites');
+
+  dialogList.innerHTML = `
+  ${data.defaultSites.map(item => `<li><span class="site-name">${item.name}</span> : <a href="${item.url}">${item.url}</a>`).join('')}
+  `;
+};
+
+const saveDialogItem = () => {
   const formAddSite = document.querySelector('form#form-add-site');
+
   const name = formAddSite.siteName.value;
   const url = formAddSite.siteUrl.value;
 
   formAddSite.siteName.value = '';
   formAddSite.siteUrl.value = '';
 
-  const data = {
-    defaultSites: {
-      name,
-      url
+  const dataFromForm = {name, url};
+
+  chrome.storage.sync.get('defaultSites', syncData => {
+    let dataToSave = {};
+
+    if (isObjectEmpty(syncData)) {
+      dataToSave = {defaultSites: [dataFromForm]};
+    } else {
+      dataToSave = {defaultSites: [...syncData.defaultSites, dataFromForm]};
     }
-  };
 
-  chrome.storage.local.sync(data, () => {
-    //  Data's been saved
-    console.log('data saved');
-
+    chrome.storage.sync.set(dataToSave, () => {
+      //  Data been saved
+      console.log('data saved', dataToSave);
+      populateDialogItemsList(dataToSave);
+    });
   });
-}
+};
 
-function populateDialogItemsList(data) {
-  console.log(data);
-
-}
-
-function setPlusButton() {
+const setPlusButton = () => {
   const plus = document.querySelector('div#container div#default-links-box div.title-container button#plus-open-default-sites');
 
   plus.addEventListener('click', () => {
     const dialog = document.querySelector('dialog');
 
     chrome.storage.sync.get('defaultSites', data => {
-      if (data) {
+      console.log(data);
+
+      if (!isObjectEmpty(data)) {
         populateDialogItemsList(data);
       }
     });
@@ -151,9 +173,13 @@ function setPlusButton() {
     dialog.showModal();
   });
 
-  const addSiteButton = document.querySelector('form#form-add-site button');
-  addSiteButton.addEventListener('click', () => {
-    saveDialogItem();
+  const formAddSiteButton = document.querySelector('form#form-add-site');
+  formAddSiteButton.addEventListener('submit', saveDialogItem);
+};
+
+const loadDefaultSites = () => {
+  chrome.storage.sync.get('defaultSites', data => {
+    defaultSitesArray = data.defaultSites;
   });
 }
 
@@ -162,6 +188,9 @@ function init() {
   setInsertCustomClinks();
   setRefreshUrls();
   setPlusButton();
+
+  document.querySelector('button#reset').addEventListener('click', resetStorage);
+  document.querySelector('button#log').addEventListener('click', logStorage);
 }
 
 // run the code when DOM is fully loaded.
